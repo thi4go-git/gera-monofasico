@@ -1,6 +1,7 @@
 package com.dynns.cloudtecnologia.monofasico.service;
 
 import com.dynns.cloudtecnologia.monofasico.model.entity.Produto;
+import java.awt.Desktop;
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,6 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
@@ -114,12 +117,31 @@ public class XmlService {
             FileOutputStream outputStream = new FileOutputStream(caminhoRelatorio);
             excel.write(outputStream);
             excel.close();
-            JOptionPane.showMessageDialog(null,
-                    "Processo Concluído, arquivo gerado: " + caminhoRelatorio);
+            //
+            int result = JOptionPane.showConfirmDialog(null,
+                    "Processo Concluído! \n"
+                    + "Arquivo gerado: " + caminhoRelatorio + "  \n "
+                    + "DESEJA ABRIR O ARQUIVO?", "Confirmação", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                this.abrirArquivo(caminhoRelatorio);
+            }
             System.exit(0);
+            //
         } catch (HeadlessException | IOException e) {
             JOptionPane.showMessageDialog(null, "Erro ao gerar Planilha! " + e.getMessage());
         }
+    }
+
+    private void abrirArquivo(String caminhoExcel) {
+        try {
+            File file = new File(caminhoExcel);
+            Desktop desktop = Desktop.getDesktop();
+            desktop.open(file);
+        } catch (IOException ex) {
+            Logger.getLogger(XmlService.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "*** Erro ao Abrir arquivo! ***");
+        }
+
     }
 
 }
