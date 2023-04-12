@@ -27,15 +27,16 @@ public class XmlService {
     public void gerarRelatorio(final File pasta) {
         String[] extensions = new String[]{"xml"};
         List<File> arquivosPasta = (List<File>) FileUtils.listFiles(pasta, extensions, true);
-        //
         listaProdutos = new ArrayList<>();
-        //
-        int cont = 0;
         for (File xmlAtual : arquivosPasta) {
-            cont++;
             adicionarProdutoDoXmlNaLista(xmlAtual);
         }
-        this.criaExcel();
+        if (!listaProdutos.isEmpty()) {
+            this.criaExcel();
+        } else {
+            JOptionPane.showMessageDialog(null,
+                    " *** Relatório não gerado: Não localizamos XML´s referente aos Layouts: NFE ( GO/DF )  |  NFCE ( GO/DF ) ***");
+        }
     }
 
     /**
@@ -68,7 +69,6 @@ public class XmlService {
     }
 
     private void criaExcel() {
-
         Workbook excel = new XSSFWorkbook();
         Sheet planilha = excel.createSheet("RELATÓRIO");
         // Cria CABEÇALHO
@@ -102,7 +102,6 @@ public class XmlService {
             Cell colunaVlrLiq = dataRow.createCell(5);
             colunaVlrLiq.setCellValue(produto.getVLiquido());
         }
-
         // Ajusta o tamanho das colunas
         for (int i = 0; i < headers.length; i++) {
             planilha.autoSizeColumn(i);
@@ -121,7 +120,6 @@ public class XmlService {
         } catch (HeadlessException | IOException e) {
             JOptionPane.showMessageDialog(null, "Erro ao gerar Planilha! " + e.getMessage());
         }
-
     }
 
 }
